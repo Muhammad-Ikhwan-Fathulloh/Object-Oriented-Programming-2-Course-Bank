@@ -36,7 +36,7 @@ Mata kuliah ini membahas **Pemrograman Berorientasi Objek (PBO) Lanjutan** denga
 ---
 
 ## **📌 Detail Setiap Pertemuan dengan Contoh Kode**
-### **📌 1. Pengenalan Spring Boot & Arsitektur Monolith**
+### **📌 1. Pengenalan Spring Boot & Arsitektur**
 ✅ **Instalasi dan Konfigurasi**  
 - Install **JDK 17**, **Spring Boot**, dan **PostgreSQL/MySQL**  
 - Setup **Visual Studio Code** dengan ekstensi Java  
