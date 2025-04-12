@@ -1,128 +1,98 @@
-Berikut adalah panduan lengkap untuk membuat aplikasi **To-Do List** menggunakan **Spring Boot + Thymeleaf + MySQL**.
+Berikut adalah **penjelasan lengkap** tentang pembuatan aplikasi **To-Do List dengan Spring Boot, Thymeleaf, dan MySQL**, termasuk penjabaran dari setiap langkah beserta alasan dan fungsinya.
 
 ---
 
-## **1. Setup Proyek Spring Boot**
-Buat proyek Spring Boot menggunakan [Spring Initializr](https://start.spring.io/) dengan dependensi:
-- **Spring Web**
-- **Thymeleaf**
-- **Spring Boot DevTools**
-- **Spring Data JPA**
-- **MySQL Driver**
+## 🎯 **Tujuan Proyek**
+Membuat aplikasi _To-Do List_ sederhana berbasis web, yang memungkinkan pengguna untuk:
+- Menambah tugas baru
+- Melihat daftar tugas
+- Menandai tugas sebagai selesai
+- Menghapus tugas
 
-Atau jalankan perintah:
-```sh
+Dengan menggunakan **Spring Boot** sebagai backend, **Thymeleaf** sebagai template engine frontend, dan **MySQL** sebagai database.
+
+---
+
+## 1. ✅ **Setup Proyek Spring Boot**
+Gunakan Spring Initializr untuk membuat kerangka proyek dengan dependensi:
+
+| Dependency | Fungsi |
+|-----------|--------|
+| **Spring Web** | Menyediakan kemampuan untuk membuat aplikasi berbasis web dan RESTful. |
+| **Thymeleaf** | Template engine untuk menghasilkan HTML dinamis di sisi server. |
+| **Spring Boot DevTools** | Mempercepat pengembangan dengan _hot reload_. |
+| **Spring Data JPA** | Menyederhanakan interaksi dengan database menggunakan ORM. |
+| **MySQL Driver** | Driver JDBC untuk koneksi ke database MySQL. |
+
+> Alternatif CLI:
+```bash
 spring init --name=spring-todo --dependencies=web,thymeleaf,jpa,mysql,devtools spring-todo
 ```
 
-Setelah proyek dibuat, buka di **IDE** favoritmu.
-
 ---
 
-## **2. Konfigurasi Database MySQL**
-Edit `src/main/resources/application.properties`:
+## 2. ⚙️ **Konfigurasi Koneksi Database**
+
+Edit `application.properties` agar aplikasi bisa terhubung ke database MySQL:
 
 ```properties
-# Konfigurasi Database MySQL
 spring.datasource.url=jdbc:mysql://localhost:3306/todo_db?useSSL=false&serverTimezone=UTC
 spring.datasource.username=root
 spring.datasource.password=yourpassword
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
-# Konfigurasi JPA
 spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 ```
-> Gantilah `yourpassword` dengan password MySQL kamu. Pastikan database `todo_db` sudah dibuat.
+
+### Penjelasan:
+- `ddl-auto=update`: Hibernate akan membuat/memperbarui tabel secara otomatis.
+- `show-sql=true`: Menampilkan query SQL di konsol.
+
+> Pastikan database `todo_db` telah dibuat sebelumnya di MySQL.
 
 ---
 
-## **3. Buat Model ToDo**
-Buat file `src/main/java/com/example/demo/model/ToDo.java`:
+## 3. 🧱 **Buat Model ToDo (Entity)**
 
 ```java
-package com.example.demo.model;
-
-import jakarta.persistence.*;
-
 @Entity
 @Table(name = "todos")
 public class ToDo {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String task;
     private boolean completed;
 
-    public ToDo() {}
-
-    public ToDo(String task, boolean completed) {
-        this.task = task;
-        this.completed = completed;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTask() {
-        return task;
-    }
-
-    public void setTask(String task) {
-        this.task = task;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
+    // Konstruktor, Getter, Setter
 }
 ```
 
+### Penjelasan:
+- `@Entity`: Menandakan bahwa ini adalah model untuk tabel database.
+- `@Table`: Nama tabel di database.
+- `@Id` dan `@GeneratedValue`: `id` sebagai primary key dan akan otomatis terisi (auto increment).
+
 ---
 
-## **4. Buat Repository**
-Buat file `src/main/java/com/example/demo/repository/ToDoRepository.java`:
+## 4. 🗃️ **Buat Repository**
 
 ```java
-package com.example.demo.repository;
-
-import com.example.demo.model.ToDo;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 @Repository
 public interface ToDoRepository extends JpaRepository<ToDo, Long> {
 }
 ```
 
+### Penjelasan:
+- Menggunakan `JpaRepository`, kita bisa menggunakan fungsi-fungsi bawaan seperti `findAll()`, `save()`, `deleteById()`, dll tanpa implementasi manual.
+
 ---
 
-## **5. Buat Service**
-Buat file `src/main/java/com/example/demo/service/ToDoService.java`:
+## 5. ⚙️ **Buat Service Layer**
 
 ```java
-package com.example.demo.service;
-
-import com.example.demo.model.ToDo;
-import com.example.demo.repository.ToDoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-
 @Service
 public class ToDoService {
 
@@ -147,23 +117,16 @@ public class ToDoService {
 }
 ```
 
+### Penjelasan:
+- Layer ini menangani logika bisnis.
+- Memisahkan controller dari logika database.
+- `Optional<ToDo>` digunakan untuk menghindari `NullPointerException`.
+
 ---
 
-## **6. Buat Controller**
-Buat file `src/main/java/com/example/demo/controller/ToDoController.java`:
+## 6. 🎮 **Buat Controller**
 
 ```java
-package com.example.demo.controller;
-
-import com.example.demo.model.ToDo;
-import com.example.demo.service.ToDoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
-
 @Controller
 @RequestMapping("/")
 public class ToDoController {
@@ -202,24 +165,28 @@ public class ToDoController {
 }
 ```
 
+### Penjelasan:
+- `@GetMapping` menampilkan halaman utama.
+- `@PostMapping("/add")` menambahkan tugas baru.
+- `@PostMapping("/delete/{id}")` menghapus tugas berdasarkan ID.
+- `@PostMapping("/update/{id}")` menandai tugas selesai / belum selesai.
+
 ---
 
-## **7. Buat Tampilan HTML**
-Buat file `src/main/resources/templates/index.html`:
+## 7. 🖼️ **Buat Template HTML (Thymeleaf)**
 
+**`index.html`**:
 ```html
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do List</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <h1>To-Do List</h1>
 
-    <!-- Form Tambah ToDo -->
     <form action="/add" method="post">
         <input type="text" name="task" required>
         <button type="submit">Tambah</button>
@@ -228,12 +195,12 @@ Buat file `src/main/resources/templates/index.html`:
     <ul>
         <li th:each="todo : ${todos}">
             <span th:text="${todo.task}" th:class="${todo.completed} ? 'completed' : ''"></span>
-            <form action="/update/{id}" method="post" style="display:inline;">
-                <input type="hidden" name="id" th:value="${todo.id}">
+
+            <form th:action="@{'/update/' + ${todo.id}}" method="post" style="display:inline;">
                 <button type="submit">✔</button>
             </form>
-            <form action="/delete/{id}" method="post" style="display:inline;">
-                <input type="hidden" name="id" th:value="${todo.id}">
+
+            <form th:action="@{'/delete/' + ${todo.id}}" method="post" style="display:inline;">
                 <button type="submit">❌</button>
             </form>
         </li>
@@ -244,15 +211,26 @@ Buat file `src/main/resources/templates/index.html`:
 </html>
 ```
 
+### Penjelasan:
+- `th:each`: Melakukan perulangan list todo.
+- `th:text`: Menampilkan teks tugas.
+- `th:class`: Menambahkan kelas CSS jika tugas sudah selesai.
+- `th:action`: Membuat URL dinamis berdasarkan ID.
+
 ---
 
-## **8. Buat CSS untuk Tampilan**
-Buat file `src/main/resources/static/css/style.css`:
+## 8. 🎨 **Tambahkan CSS untuk Tampilan**
 
+**`style.css`**:
 ```css
 body {
     font-family: Arial, sans-serif;
     text-align: center;
+    padding: 2rem;
+}
+
+form {
+    margin: 1rem 0;
 }
 
 ul {
@@ -266,27 +244,67 @@ li {
 
 .completed {
     text-decoration: line-through;
+    color: gray;
 }
 ```
 
+### Penjelasan:
+Memberikan gaya minimalis untuk tampilan dan memberikan efek “dicoret” pada tugas yang sudah selesai.
+
 ---
 
-## **9. Jalankan Aplikasi**
-Jalankan aplikasi dengan perintah:
-```sh
+## 9. 🚀 **Menjalankan Aplikasi**
+
+Jalankan aplikasi dengan:
+
+```bash
 mvn spring-boot:run
-```
-Atau jika menggunakan Gradle:
-```sh
+# atau jika menggunakan Gradle:
 ./gradlew bootRun
 ```
 
-Akses di `http://localhost:8080`.
+Akses di browser:
+```
+http://localhost:8080
+```
 
 ---
 
-## **10. Penjelasan Fitur**
-✅ **Menampilkan daftar To-Do**  
-✅ **Menambahkan tugas baru**  
-✅ **Menandai tugas sebagai selesai**  
-✅ **Menghapus tugas**  
+## 10. ✅ **Fitur yang Telah Dibuat**
+
+| Fitur | Penjelasan |
+|-------|------------|
+| **Tambah To-Do** | Pengguna dapat menambahkan tugas baru melalui form. |
+| **Tampilkan Daftar** | Semua tugas ditampilkan dalam daftar. |
+| **Tandai Selesai** | Pengguna dapat menandai tugas sebagai selesai (✔). |
+| **Hapus Tugas** | Pengguna dapat menghapus tugas (❌). |
+
+---
+
+## 11. 📚 **Struktur Folder**
+
+```
+spring-todo/
+├── src/
+│   ├── main/
+│   │   ├── java/com/example/demo/
+│   │   │   ├── controller/ToDoController.java
+│   │   │   ├── service/ToDoService.java
+│   │   │   ├── repository/ToDoRepository.java
+│   │   │   └── model/ToDo.java
+│   │   ├── resources/
+│   │   │   ├── templates/index.html
+│   │   │   ├── static/css/style.css
+│   │   │   └── application.properties
+├── pom.xml
+```
+
+---
+
+## 12. 🔧 **Latihan**
+- ✏️ Validasi input
+- ✅ Filter tampilan: Semua / Selesai / Belum Selesai
+- 📱 Responsive design (pakai Bootstrap)
+- 📆 Tambahkan tanggal deadline
+
+---
