@@ -25,8 +25,8 @@ Project ini adalah contoh sederhana cara **deploy aplikasi Spring Boot menggunak
 * **Language**: Java
 * **Spring Boot**: Terbaru (misalnya 3.2.x)
 * **Group**: `com.example`
-* **Artifact**: `dockerthymeleaf`
-* **Name**: `dockerthymeleaf`
+* **Artifact**: `demo`
+* **Name**: `demo`
 * **Packaging**: Jar
 * **Java**: 17 (atau sesuai versi di sistem)
 * **Dependencies**:
@@ -45,7 +45,7 @@ Klik **"Generate"**, lalu ekstrak file ZIP tersebut dan buka di IDE seperti Inte
 Buat file `HomeController.java`:
 
 ```java
-package com.example.dockerthymeleaf.controller;
+package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -166,8 +166,45 @@ target/
 
 ---
 
+## 🔄 Update Docker Image
+
+Jika kamu melakukan perubahan pada source code atau HTML dan ingin membangun ulang image:
+
+```bash
+./mvnw clean package
+
+docker build -t springboot-hello-app .
+```
+
+Jika container masih berjalan, stop dulu dengan:
+
+```bash
+docker ps
+```
+
+Cari `CONTAINER ID`, lalu:
+
+```bash
+docker stop <CONTAINER_ID>
+docker rm <CONTAINER_ID>
+```
+
+Kemudian jalankan ulang:
+
+```bash
+docker run -p 8080:8080 springboot-hello-app
+```
+
+---
+
 ## 📚 Referensi
 
 * [Spring Boot Docs](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
 * [Docker Docs](https://docs.docker.com/)
 * [Thymeleaf Docs](https://www.thymeleaf.org/)
+
+---
+
+## 🔖 Lisensi
+
+Proyek ini bebas digunakan untuk keperluan belajar dan pengembangan.
