@@ -114,7 +114,7 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 ## 🔥 Build Docker Image
 
 ```bash
-docker build -t springboot-thymeleaf-app .
+docker build -t springboot-hello-app .
 ```
 
 ---
@@ -122,7 +122,7 @@ docker build -t springboot-thymeleaf-app .
 ## 🚦 Jalankan Container
 
 ```bash
-docker run -p 8080:8080 springboot-thymeleaf-app
+docker run -p 8080:8080 springboot-hello-app
 ```
 
 ---
