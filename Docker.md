@@ -92,7 +92,7 @@ Jalankan perintah berikut di terminal:
 Ini akan menghasilkan file `.jar` di folder `target/`, misalnya:
 
 ```
-target/dockerthymeleaf-0.0.1-SNAPSHOT.jar
+target/demo-0.0.1-SNAPSHOT.jar
 ```
 
 ---
@@ -105,7 +105,7 @@ Buat file `Dockerfile` di root project:
 FROM eclipse-temurin:17-jdk-alpine
 LABEL maintainer="your.email@example.com"
 WORKDIR /app
-COPY target/dockerthymeleaf-0.0.1-SNAPSHOT.jar app.jar
+COPY target/demo-0.0.1-SNAPSHOT.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
 
