@@ -36,7 +36,9 @@ docker tag springboot-hello-app ikhwanfathulloh/springboot-hello-app:latest
 ## 4. Push ke Docker Hub
 
 ```bash
-docker push <dockerhub-username>/springboot-hello-app:latest
+docker build . -t <dockerhub-username>/springboot-hello-app
+docker login
+docker push <dockerhub-username>/springboot-hello-app
 ```
 
 Contoh:
