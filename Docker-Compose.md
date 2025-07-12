@@ -1,6 +1,36 @@
 # 🚀 Spring Boot + Docker Compose + MySQL
 
-Contoh proyek sederhana **Spring Boot + Thymeleaf** yang berjalan di dalam container **Docker Compose**, lengkap dengan **seed data otomatis**.
+Tentu! Berikut saya tambahkan bagian **"Buat Proyek dari Spring Initializr"** ke bagian awal panduan, agar jelas bahwa proyek dimulai dari situs [https://start.spring.io/](https://start.spring.io/).
+
+---
+
+## 🛠️ 0. Buat Proyek dari Spring Initializr
+
+Buka: 👉 [https://start.spring.io](https://start.spring.io)
+
+Isi konfigurasi sebagai berikut:
+
+| Field            | Nilai                      |
+| ---------------- | -------------------------- |
+| **Project**      | Maven Project              |
+| **Language**     | Java                       |
+| **Spring Boot**  | 3.2.x (terbaru)            |
+| **Group**        | `com.example`              |
+| **Artifact**     | `demo`                     |
+| **Name**         | `demo`                     |
+| **Package Name** | `com.example.demo`         |
+| **Packaging**    | Jar                        |
+| **Java**         | 17 atau 21 (sesuai sistem) |
+
+### 📦 Tambahkan Dependencies:
+
+* ✅ **Spring Web**
+* ✅ **Thymeleaf**
+* ✅ **Spring Data JPA**
+* ✅ **MySQL Driver**
+* ✅ *(Opsional tapi direkomendasikan)*: **Flyway Migration**
+
+> Klik tombol **\[Generate]** → unzip file → buka di IDE seperti IntelliJ IDEA / VSCode.
 
 ---
 
